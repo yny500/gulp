@@ -1,0 +1,27 @@
+@import "_reset";
+@import "_variables";
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: $red;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+img {
+    width: 100px;
+}
+
+footer {
+    display: none;
+}
+
+h1 {
+    margin-top: 10px;
+    color: white;
+    font-size: 40px;
+    font-weight: 200;
+}
