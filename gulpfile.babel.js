@@ -1,19 +1,19 @@
 import gulp from "gulp"; // plugin 설치 및 가져오기
-import gpug from "gulp-pug";
 import del from "delete";
 import ws from "gulp-webserver";
 import image from "gulp-image";
 import dartSass from "sass";
 import gulpSass from "gulp-sass";
+import fileinclude from "gulp-file-include";
 import autoprefixer from "gulp-autoprefixer"; // 구형 브라우저 호환
 import miniCSS from "gulp-csso"; // css 압축
 import bro from "gulp-bro"; //  browserify의 신 버전(import, export와 같은 문법은 브라우저가 해석할 수 없기에 해석할 수 있도록 도와줌)
 import babelify from "babelify"; // babel 사용
 
 const routes = {
-  pug: {
-    watch: "src/**/*.pug", // src 폴더 안에 모든 파일을 지켜봄
-    src: "src/*.pug", // 해당 경로의 png로 끝나는 파일들(/**/은 폴더 내부까지 포함한단 의미)
+  html: {
+    watch: "src/**/*.html", // src 폴더 안에 모든 파일을 지켜봄
+    src: "src/*.html", // 해당 경로의 html로 끝나는 파일들(/**/은 폴더 내부까지 포함한단 의미)
     dest: "build", // 뿌려줄 경로(폴더, 목적지)
   },
   img: {
@@ -32,17 +32,24 @@ const routes = {
   },
 };
 
-const pug = () =>
-  gulp.src(routes.pug.src).pipe(gpug()).pipe(gulp.dest(routes.pug.dest));
-
 const clean = () => del(["build"]); // 시리즈 추가, 괄호 안에 확장자나 폴더 이름 적어주기
 
 // 웹 서버 설정
 const webserver = () =>
   gulp.src("build").pipe(ws({ livereload: true, open: true })); // 서버에서 보여주고 싶은 폴더 지정
 
-const sass = gulpSass(dartSass);
+const html = () =>
+  gulp
+    .src(routes.html.src)
+    .pipe(
+      fileinclude({
+        prefix: "@@",
+        basepath: "@file",
+      })
+    )
+    .pipe(gulp.dest(routes.html.dest));
 
+const sass = gulpSass(dartSass);
 const styles = () =>
   gulp
     .src(routes.scss.src)
@@ -69,7 +76,7 @@ const js = () =>
     .pipe(gulp.dest(routes.js.dest));
 
 const watch = () => {
-  gulp.watch(routes.pug.watch, pug);
+  gulp.watch(routes.html.watch, html);
   gulp.watch(routes.scss.watch, styles);
   gulp.watch(routes.js.src, js);
 };
@@ -82,7 +89,7 @@ const prepare = gulp.series([clean, img]); // dev 준비 과정에서 발생
 // gulp-image 6.2.1버전으로 낮춰주면 됨
 // -> npm install gulp-image@6.2.1 --save-dev
 
-const assets = gulp.series([pug, styles, js]);
+const assets = gulp.series([html, styles, js]);
 
 const live = gulp.parallel([webserver, watch]); // 두가지 task를 병행할땐 parallel()로 사용
 
