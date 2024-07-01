@@ -40,10 +40,10 @@ CSS 전처리기를 컴파일하거나 JavaScript 파일을 번들링하고 압�
 <br>
 
 ## Installation
+        node -v (설치 확인)
+        npm -v (설치 확인)
         npm install gulp-cli -g
-        npm install
         npm install gulp -d
-        npm add gulp -d
 
 ## Build
         gulp dev
