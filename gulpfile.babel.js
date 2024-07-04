@@ -89,8 +89,9 @@ const watch = () => {
   gulp.watch(routes.html.watch, html);
   gulp.watch(routes.img.src, img);
   gulp.watch(routes.scss.watch, styles);
-  gulp.watch(routes.js.watch, minifyJS);
   gulp.watch(routes.js.watch, compileAppsJS);
+  gulp.watch(routes.js.watch, compileJS);
+  gulp.watch(routes.js.watch, minifyJS);
 };
 
 const img = () => gulp.src(routes.img.src).pipe(image()).pipe(gulp.dest(routes.img.dist));
