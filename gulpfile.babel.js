@@ -27,9 +27,14 @@ const routes = {
   },
   js: {
     watch: 'src/js/**/*.js',
-    src: 'src/js/*.js',
+    src: 'src/js/**/*.js',
+    srcApps: 'src/js/apps/*.js',
+    srcLibs: 'src/js/libs/*.js',
     dist: 'dist/js',
-    minifyFileName: 'main.js'
+    distApps: 'dist/js/apps',
+    basicFileName: 'main.js',
+    minifyFileName: 'main.min.js',
+    minifyLibsFileName: 'main.libs.min.js'
   }
 };
 
@@ -57,7 +62,20 @@ const styles = () =>
     .pipe(miniCSS())
     .pipe(gulp.dest(routes.scss.dist));
 
-const js = () =>
+const compileAppsJS = () =>
+  gulp
+    .src(routes.js.srcApps)
+    .pipe(babel({ presets: ['@babel/env'] }))
+    .pipe(gulp.dest(routes.js.distApps));
+
+const compileJS = () =>
+  gulp
+    .src(routes.js.srcApps)
+    .pipe(concat(routes.js.basicFileName))
+    .pipe(babel({ presets: ['@babel/env'] }))
+    .pipe(gulp.dest(routes.js.dist));
+
+const minifyJS = () =>
   gulp
     .src(routes.js.src)
     .pipe(concat(routes.js.minifyFileName))
@@ -65,11 +83,14 @@ const js = () =>
     .pipe(uglify())
     .pipe(gulp.dest(routes.js.dist));
 
+const minifyLibsJS = () => gulp.src(routes.js.srcLibs).pipe(concat(routes.js.minifyLibsFileName)).pipe(gulp.dest(routes.js.dist));
+
 const watch = () => {
   gulp.watch(routes.html.watch, html);
   gulp.watch(routes.img.src, img);
   gulp.watch(routes.scss.watch, styles);
-  gulp.watch(routes.js.watch, js);
+  gulp.watch(routes.js.watch, minifyJS);
+  gulp.watch(routes.js.watch, compileAppsJS);
 };
 
 const img = () => gulp.src(routes.img.src).pipe(image()).pipe(gulp.dest(routes.img.dist));
@@ -79,7 +100,7 @@ const prepare = gulp.series([clean, img]); // dev 준비 과정에서 발생
 // gulp-image 6.2.1버전으로 낮춰주면 됨
 // -> npm install gulp-image@6.2.1 --save-dev
 
-const assets = gulp.series([html, styles, js]);
+const assets = gulp.series([html, styles, compileAppsJS, compileJS, minifyJS, minifyLibsJS]);
 
 const live = gulp.parallel([webserver, watch]); // 두가지 task를 병행할땐 parallel()로 사용
 
