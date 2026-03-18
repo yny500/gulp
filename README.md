@@ -1,6 +1,6 @@
 # **Gulp Build Setup**
   
-#### 💡 Vanilla JS 프로젝트 개발을 위한 Gulp 기반 빌드 환경입니다. 
+#### Vanilla JS 프로젝트 개발을 위한 Gulp 기반 빌드 환경입니다. 
 #### 반복적인 작업을 자동화하기 위해 작업하였습니다.
 <br>
 
